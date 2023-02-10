@@ -4,19 +4,7 @@ public class CardValidator {
 
 //    private OutputInterface outputInterface = new OutputInterface(cardTypeChecker(),getCardNumber(), getCardNumberLength(), getCardStatus());
 
-    public String getCardNumber() {
-        return cardNumber;
-    }
-
-    public int getCardNumberLength(){
-        return cardNumber.length();
-    }
-
     private final String cardNumber;
-
-    public String getCardStatus() {
-        return cardStatus;
-    }
 
     public String cardStatus;
 
@@ -62,21 +50,22 @@ public class CardValidator {
 
             int americanCardFirstDigit = AMERICAN_EXPRESS / 10;
             int americanCardSecondDigit = AMERICAN_EXPRESS % 10;
-            if (cardNumberList()[0] == americanCardFirstDigit && cardNumberList()[1] == americanCardSecondDigit)
+            boolean isAmericanExpressNumbers = cardNumberList()[0] == americanCardFirstDigit && cardNumberList()[1] == americanCardSecondDigit ;
+            if (isAmericanExpressNumbers)
                 cardType = "AMERICAN EXPRESS";
 
         return cardType;
     }
 
-        public void sumOfCardNumbers() {
+        public String sumOfCardNumbers() {
             //DOUBLING THE SECOND NUMBER FROM RIGHT TO LEFT
-            // 3756787892645368
 
             int secondToTheLastNumberInTheList = cardNumberList().length - 2;
             int evenTotal = 0;
             for (int i = secondToTheLastNumberInTheList; i >= 0 ; i -= 2) {
                 int result = cardNumberList()[i] * 2;
-                if (result > 9) {
+                boolean isSingleDigit = result < 9;
+                if (!isSingleDigit) {
                     int firstDigit = result / 10;
                     int secondDigit = result % 10;
                     result = firstDigit + secondDigit;
@@ -93,22 +82,20 @@ public class CardValidator {
             boolean cardStatusCheck = cardNumbersSum % 10 == 0;
             if (cardStatusCheck) cardStatus = "Valid";
             else cardStatus = "Invalid";
+
+            return cardStatus;
+
         }
         public String validateCard () {
-
             cardNumberList();
+            cardLengthValidity();
             cardTypeChecker();
             sumOfCardNumbers();
-            cardLengthValidity();
             return String.format("""
                     Credit Card Type: %s
                     Credit Card Number: %s
                     Credit Card Number Digit Length: %d
                     Credit Card Validility Status: %s
                     """, cardTypeChecker(), cardNumber, cardNumber.length(), cardStatus);
-
-
         }
-
-
 }
