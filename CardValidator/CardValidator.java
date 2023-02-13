@@ -1,19 +1,18 @@
 package CardValidator;
 
 public class CardValidator {
-
-//    private OutputInterface outputInterface = new OutputInterface(cardTypeChecker(),getCardNumber(), getCardNumberLength(), getCardStatus());
-
     private final String cardNumber;
-
     public String cardStatus;
+    OutputInterface outputInterface ;
+    private boolean isValid;
+    String cardType = "INVALID CARD TYPE";
 
     public CardValidator(String cardNumber){
         this.cardNumber = cardNumber;
     }
 
+    // COLLECTING THE CARD NUMBER AS A STRING AND CONVERTING IT TO AN ARRAY OF INTEGER OBJECT
     public int[] cardNumberList(){
-
         String[] numbersString = new String[cardNumber.length()];
         int[] numbersList = new int[numbersString.length];
         for (int i = 0 ; i < cardNumber.length(); i ++){
@@ -24,41 +23,44 @@ public class CardValidator {
         return numbersList;
     }
 
-
-    private String cardLengthValidity(){
-        boolean isValid = false;
+    // DETERMINING CARD VALIDITY VIA IT'S LENGTH
+    // card number length must be >= 13 and <= 16
+    // 13 <= L >=16
+    private boolean cardLengthValidity(){
         isValid = cardNumber.length() >= 13 & cardNumber.length() <= 16;
-        if (isValid)
-            cardStatus = "Valid";
-        else cardStatus = "Invalid";
-        return cardStatus;
+        return isValid;
     }
 
+    // DETERMINING CARD'S TYPE
     public String cardTypeChecker() {
 
-        String cardType = "INVALID CARD TYPE";
-        final int VISA = 4;
-        final int MASTERCARD = 5;
-        final int DISCOVER_CARD = 6;
-        final int AMERICAN_EXPRESS = 37;
+        if (cardLengthValidity()){
+            final int VISA = 4;
+            final int MASTERCARD = 5;
+            final int DISCOVER_CARD = 6;
+            final int AMERICAN_EXPRESS = 37;
 
-        switch (cardNumberList()[0]) {
-            case VISA -> cardType = "VISA";
-            case MASTERCARD -> cardType = "MASTERCARD";
-            case DISCOVER_CARD -> cardType = "DISCOVER CARD";
-        }
+            // DETERMINING CARD TYPE THROUGH THE CARD'S FIRST NUMBER
+            switch (cardNumberList()[0]) {
+                case VISA -> cardType = "VISA";
+                case MASTERCARD -> cardType = "MASTERCARD";
+                case DISCOVER_CARD -> cardType = "DISCOVER CARD";
+            }
 
+            // DETERMINING AMERICAN EXPRESS CARD TYPE THROUGH THE CARD'S FIRST-TWO NUMBERS
             int americanCardFirstDigit = AMERICAN_EXPRESS / 10;
             int americanCardSecondDigit = AMERICAN_EXPRESS % 10;
             boolean isAmericanExpressNumbers = cardNumberList()[0] == americanCardFirstDigit && cardNumberList()[1] == americanCardSecondDigit ;
             if (isAmericanExpressNumbers)
                 cardType = "AMERICAN EXPRESS";
+        } else isValid =false;
+
 
         return cardType;
     }
 
-        public String sumOfCardNumbers() {
-            //DOUBLING THE SECOND NUMBER FROM RIGHT TO LEFT
+        public boolean sumOfCardNumbers() {
+            //DOUBLING THE NUMBER IN EVEN INDEX FROM RIGHT TO LEFT
 
             int secondToTheLastNumberInTheList = cardNumberList().length - 2;
             int evenTotal = 0;
@@ -73,29 +75,31 @@ public class CardValidator {
                 evenTotal += result;
             }
 
+            //ADDING THE NUMBERS IN ODD INDEX ONLY
             int oddTotal = 0;
             for (int i = secondToTheLastNumberInTheList + 2; i > 0; i -= 2) {
                 oddTotal += cardNumberList()[i - 1];
             }
 
+            // SUM TOTAL OF DOUBLED EVEN INDEX AND TOTAL OF ODD INDEX
             int cardNumbersSum = evenTotal + oddTotal;
-            boolean cardStatusCheck = cardNumbersSum % 10 == 0;
-            if (cardStatusCheck) cardStatus = "Valid";
-            else cardStatus = "Invalid";
+            isValid = cardNumbersSum % 10 == 0;
 
-            return cardStatus;
+            return isValid;
 
         }
-        public String validateCard () {
-            cardNumberList();
-            cardLengthValidity();
-            cardTypeChecker();
-            sumOfCardNumbers();
-            return String.format("""
-                    Credit Card Type: %s
-                    Credit Card Number: %s
-                    Credit Card Number Digit Length: %d
-                    Credit Card Validility Status: %s
-                    """, cardTypeChecker(), cardNumber, cardNumber.length(), cardStatus);
-        }
+
+    // QUERY METHOD FOR FINAL VARIABLE CARD NUMBER
+    private  String getCardNumber(){
+        return this.cardNumber;
+    }
+
+    public String validateCard () {
+        if ( cardLengthValidity() & sumOfCardNumbers()) cardStatus = "Valid";
+        else cardStatus = "Invalid";
+        outputInterface = new OutputInterface(this.cardTypeChecker(), this.getCardNumber(), this.cardStatus);
+
+        return outputInterface.toString();
+    }
+
 }
