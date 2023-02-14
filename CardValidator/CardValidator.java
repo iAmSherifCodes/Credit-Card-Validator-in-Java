@@ -25,8 +25,8 @@ public class CardValidator {
 
     // DETERMINING CARD VALIDITY VIA IT'S LENGTH
     // card number length must be >= 13 and <= 16
-    // 13 <= L >=16
-    private boolean cardLengthValidity(){
+    // 13 <= L <=16
+    protected boolean cardLengthValidity(){
         isValid = cardNumber.length() >= 13 & cardNumber.length() <= 16;
         return isValid;
     }
@@ -95,7 +95,7 @@ public class CardValidator {
     }
 
     public String validateCard () {
-        if ( cardLengthValidity() & sumOfCardNumbers()) cardStatus = "Valid";
+        if ( cardLengthValidity() && sumOfCardNumbers()) cardStatus = "Valid";
         else cardStatus = "Invalid";
         outputInterface = new OutputInterface(this.cardTypeChecker(), this.getCardNumber(), this.cardStatus);
 

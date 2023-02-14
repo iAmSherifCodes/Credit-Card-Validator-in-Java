@@ -7,11 +7,16 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CardValidatorTest {
+public class CardValidatorTest extends CardValidator {
 //    String cardNumber = "5399831619690403";
  //   String cardNumber; //= "45678789264536321212";
     CardValidator validator;
-//    @BeforeEach
+
+    public CardValidatorTest(String cardNumber) {
+        super(cardNumber);
+    }
+
+    //    @BeforeEach
 //    void setUp(){
 ////         validator = new CardValidator(cardNumber);
 //    }
