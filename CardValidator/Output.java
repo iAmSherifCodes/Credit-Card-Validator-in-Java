@@ -1,11 +1,11 @@
 package CardValidator;
 
-public class OutputInterface{
+public class Output {
     private final String cardType;
     private final String cardNumber;
     private final String cardStatus;
 
-    public OutputInterface(String cardType, String cardNumber, String cardStatus ){
+    public Output(String cardType, String cardNumber, String cardStatus ){
         this.cardNumber = cardNumber;
         this.cardStatus = cardStatus;
         this.cardType = cardType;

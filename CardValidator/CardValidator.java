@@ -3,7 +3,7 @@ package CardValidator;
 public class CardValidator {
     private final String cardNumber;
     public String cardStatus;
-    OutputInterface outputInterface ;
+    Output outputInterface ;
     private boolean isValid;
     String cardType = "INVALID CARD TYPE";
 
@@ -15,12 +15,14 @@ public class CardValidator {
     public int[] cardNumberList(){
         String[] numbersString = new String[cardNumber.length()];
         int[] numbersList = new int[numbersString.length];
-        for (int i = 0 ; i < cardNumber.length(); i ++){
-            String s = String.valueOf(cardNumber.charAt(i));
-            numbersString[i] = s;
-            numbersList[i] = Integer.parseInt(numbersString[i]);
-        }
+        for (int i = 0 ; i < cardNumber.length(); i ++) charToList(numbersString, numbersList, i);
         return numbersList;
+    }
+
+    private void charToList(String[] numbersString, int[] numbersList, int i) {
+        String s = String.valueOf(cardNumber.charAt(i));
+        numbersString[i] = s;
+        numbersList[i] = Integer.parseInt(numbersString[i]);
     }
 
     // DETERMINING CARD VALIDITY VIA IT'S LENGTH
@@ -51,54 +53,44 @@ public class CardValidator {
             int americanCardFirstDigit = AMERICAN_EXPRESS / 10;
             int americanCardSecondDigit = AMERICAN_EXPRESS % 10;
             boolean isAmericanExpressNumbers = cardNumberList()[0] == americanCardFirstDigit && cardNumberList()[1] == americanCardSecondDigit ;
-            if (isAmericanExpressNumbers)
-                cardType = "AMERICAN EXPRESS";
+            if (isAmericanExpressNumbers) cardType = "AMERICAN EXPRESS";
         } else isValid =false;
-
-
         return cardType;
     }
-
-        public boolean sumOfCardNumbers() {
-            //DOUBLING THE NUMBER IN EVEN INDEX FROM RIGHT TO LEFT
-
+        private boolean sumOfCardNumbers() {
             int secondToTheLastNumberInTheList = cardNumberList().length - 2;
             int evenTotal = 0;
-            for (int i = secondToTheLastNumberInTheList; i >= 0 ; i -= 2) {
-                int result = cardNumberList()[i] * 2;
-                boolean isSingleDigit = result < 9;
-                if (!isSingleDigit) {
-                    int firstDigit = result / 10;
-                    int secondDigit = result % 10;
-                    result = firstDigit + secondDigit;
-                }
-                evenTotal += result;
-            }
-
-            //ADDING THE NUMBERS IN ODD INDEX ONLY
+            for (int i = secondToTheLastNumberInTheList; i >= 0 ; i -= 2) evenTotal = getEvenTotal(evenTotal, i);
             int oddTotal = 0;
-            for (int i = secondToTheLastNumberInTheList + 2; i > 0; i -= 2) {
-                oddTotal += cardNumberList()[i - 1];
-            }
-
-            // SUM TOTAL OF DOUBLED EVEN INDEX AND TOTAL OF ODD INDEX
-            int cardNumbersSum = evenTotal + oddTotal;
-            isValid = cardNumbersSum % 10 == 0;
-
-            return isValid;
-
+            for (int i = secondToTheLastNumberInTheList + 2; i > 0; i -= 2) oddTotal += cardNumberList()[i - 1];
+            return cardIsValid(evenTotal, oddTotal);
         }
-
-    // QUERY METHOD FOR FINAL VARIABLE CARD NUMBER
+    private boolean cardIsValid(int evenTotal, int oddTotal) {
+        int cardNumbersSum = evenTotal + oddTotal;
+        isValid = cardNumbersSum % 10 == 0;
+        return isValid;
+    }
+    private int getEvenTotal(int evenTotal, int i) {
+        int result = cardNumberList()[i] * 2;
+        boolean isSingleDigit = result < 9;
+        result = getResult(result, isSingleDigit);
+        evenTotal += result;
+        return evenTotal;
+    }
+    private static int getResult(int result, boolean isSingleDigit) {
+        if (!isSingleDigit) {
+            int firstDigit = result / 10;
+            int secondDigit = result % 10;
+            result = firstDigit + secondDigit;
+        }
+        return result;
+    }
     private  String getCardNumber(){
         return this.cardNumber;
     }
-
     public String validateCard () {
-        if ( cardLengthValidity() && sumOfCardNumbers()) cardStatus = "Valid";
-        else cardStatus = "Invalid";
-        outputInterface = new OutputInterface(this.cardTypeChecker(), this.getCardNumber(), this.cardStatus);
-
+        if ( cardLengthValidity() && sumOfCardNumbers()) cardStatus = "Valid"; else cardStatus = "Invalid";
+        outputInterface = new Output(this.cardTypeChecker(), this.getCardNumber(), this.cardStatus);
         return outputInterface.toString();
     }
 
